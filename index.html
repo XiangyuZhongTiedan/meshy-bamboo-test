@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BambuStudio Bridge Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f8fafc;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #1e293b;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            color: #334155;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .btn:disabled {
+            background: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 1px solid;
+        }
+        
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+        
+        .status.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+        
+        .status.info {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #dbeafe;
+        }
+        
+        .status.warning {
+            background: #fffbeb;
+            color: #d97706;
+            border-color: #fed7aa;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .method-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 24px;
+            margin-top: 24px;
+        }
+        
+        .method-section h3 {
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+        
+        .log {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 BambuStudio Bridge 测试工具</h1>
+        
+        <div class="info-box">
+            <h3>📋 3MF文件URL</h3>
+            <input 
+                type="url" 
+                id="modelUrlInput" 
+                placeholder="输入3MF文件的完整URL..." 
+                style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; margin-bottom: 16px;"
+                value="https://assets.meshy.ai/uploads/Eclipse_Axe_0813170034_texture.3mf?Expires=1755216000&Signature=dpKPIke0bOwuJ0x22bgNbM4o63HvSaFjjbrYk7cfq6GXV0vr-8sI2dMCMl5iRMDuyWKsAI6F92XCSopF-q~P1n0dLsqyy5L2c0f9C37-ykt-~d28Fu-QDDxP2nFylRdcIZ33bXHhHpxTvfQhllGOCQ7jO0AkDXm2PI-XQAyFepLnj30qpi0y1lqmSWdpioQO2KSPKrUqEEtZ0reyoABp4YWikfDu9tZ4DrsChf8Z31VDe97nZVRzY6mt4N4hO4pXER06PTzFHbqujUTPeCuhlW7f473KpG2kRHJJ7PVP1RHMGZsC473mvyD5rRVWetf2GsybO5kgHlzo-~9VoC2CWg__&Key-Pair-Id=KL5I0C8H7HX83">
+            <p><small>💡 目标: BambuStudio | 🍎 macOS将使用 bambustudioopen:// 协议</small></p>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="checkBambuStudioStatus()">
+                <span id="check-icon">🔍</span>
+                检查 BambuStudio 状态
+            </button>
+            <button class="btn btn-success" onclick="testProtocolOnly()">
+                🚀 直接测试协议处理器
+            </button>
+            <button class="btn btn-warning" onclick="testWithCleanFilename()">
+                🧪 测试清洁文件名版本
+            </button>
+            <button class="btn btn-primary" id="bridge-btn" onclick="sendToBambuStudio()">
+                <span id="send-icon">📤</span>
+                发送到 BambuStudio
+            </button>
+        </div>
+        
+        <div id="status-container">
+            <div class="status success">🎉 协议格式已修复！macOS现在使用正确的 bambustudioopen:// 格式</div>
+        </div>
+        
+        <div class="method-section">
+            <h3>🧪 手动测试方法</h3>
+            <div class="button-group">
+                <button class="btn btn-success" onclick="testMethod1()">
+                    方法1: 协议处理器
+                </button>
+                <button class="btn btn-success" onclick="testMethod2()">
+                    方法2: HTTP API
+                </button>
+                <button class="btn btn-success" onclick="testMethod3()">
+                    方法3: 直接下载
+                </button>
+            </div>
+        </div>
+        
+        <div id="log-container">
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        let isBambuStudioRunning = false;
+        
+        // 从输入框获取URL
+        function getModelUrl() {
+            const input = document.getElementById('modelUrlInput');
+            return input.value.trim();
+        }
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('log');
+            const color = {
+                'info': '#60a5fa',
+                'success': '#34d399', 
+                'error': '#f87171',
+                'warning': '#fbbf24'
+            }[type] || '#60a5fa';
+            
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function showStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        // 检查BambuStudio状态
+        async function checkBambuStudioStatus() {
+            const checkIcon = document.getElementById('check-icon');
+            checkIcon.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                log('🔍 检查 BambuStudio 服务器状态...', 'info');
+                
+                const response = await fetch('http://localhost:13618/', {
+                    method: 'GET',
+                    mode: 'no-cors', // 跨域请求，只能检测是否可达
+                    signal: AbortSignal.timeout(3000)
+                });
+                
+                // no-cors模式下，如果没有抛出异常就说明服务可达
+                isBambuStudioRunning = true;
+                showStatus('✅ BambuStudio 正在运行并监听端口 13618', 'success');
+                log('✅ BambuStudio HTTP服务器响应正常', 'success');
+                
+            } catch (error) {
+                isBambuStudioRunning = false;
+                showStatus('❌ BambuStudio 未运行或端口13618不可访问', 'error');
+                log(`❌ 无法连接到BambuStudio: ${error.message}`, 'error');
+                log('💡 请确保BambuStudio已启动', 'warning');
+            }
+            
+            checkIcon.innerHTML = '🔍';
+        }
+        
+        // 主要的Bridge发送功能
+        async function sendToBambuStudio() {
+            const modelUrl = getModelUrl();
+            if (!modelUrl) {
+                showStatus('⚠️ 请输入3MF文件URL', 'warning');
+                return;
+            }
+            
+            const sendIcon = document.getElementById('send-icon');
+            sendIcon.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                log(`📤 开始发送模型到 BambuStudio: ${modelUrl}`, 'info');
+                
+                // 检测系统并使用正确的协议格式
+                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                log(`🖥️ 检测到系统: ${isMac ? 'macOS' : 'Windows/Linux'}`, 'info');
+                
+                // 方法1: 协议处理器（使用正确的格式）
+                await testMethod1();
+                
+                // 方法2: HTTP API (延迟执行作为备用)
+                setTimeout(async () => {
+                    await testMethod2();
+                }, 1500);
+                
+                showStatus('📤 模型已发送到 BambuStudio！请检查软件界面', 'success');
+                log('🎉 发送完成！请查看BambuStudio是否收到模型', 'success');
+                
+            } catch (error) {
+                showStatus(`❌ 发送失败: ${error.message}`, 'error');
+                log(`❌ 发送失败: ${error.message}`, 'error');
+            }
+            
+            sendIcon.innerHTML = '📤';
+        }
+        
+        // 直接测试协议处理器（跳过HTTP服务器检查）
+        async function testProtocolOnly() {
+            const modelUrl = getModelUrl();
+            if (!modelUrl) {
+                showStatus('⚠️ 请输入3MF文件URL', 'warning');
+                return;
+            }
+            
+            log('🚀 直接使用协议处理器测试（跳过HTTP服务器检查）', 'info');
+            log('💡 检测到macOS系统，使用正确的协议格式', 'info');
+            
+            // 检测操作系统并使用正确的协议格式
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            let protocolUrl;
+            
+            if (isMac) {
+                // macOS使用: bambustudioopen://URL
+                protocolUrl = `bambustudioopen://${encodeURIComponent(modelUrl)}`;
+                log('🍎 macOS协议格式: bambustudioopen://...', 'info');
+            } else {
+                // Windows/Linux使用: bambustudio://open?file=URL
+                protocolUrl = `bambustudio://open?file=${encodeURIComponent(modelUrl)}`;
+                log('🖥️ Windows/Linux协议格式: bambustudio://open?file=...', 'info');
+            }
+            
+            log(`协议URL: ${protocolUrl}`, 'info');
+            
+            // 触发协议处理器
+            window.location.href = protocolUrl;
+            
+            showStatus('🚀 协议处理器已触发！请检查BambuStudio是否弹出导入对话框', 'success');
+            log('✅ 协议处理器已触发，请查看BambuStudio界面', 'success');
+            log('⏰ 如果弹出安全确认，请点击"YES"继续', 'warning');
+        }
+
+        // 测试带有清洁文件名的版本（绕过文件名解析问题）
+        async function testWithCleanFilename() {
+            const modelUrl = getModelUrl();
+            if (!modelUrl) {
+                showStatus('⚠️ 请输入3MF文件URL', 'warning');
+                return;
+            }
+
+            log('🧪 使用清洁文件名测试（可能修复崩溃问题）', 'info');
+            log('🔧 添加自定义文件名参数绕过文件名解析问题', 'warning');
+
+            // 检测操作系统并使用正确的协议格式
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            
+            // 添加自定义文件名参数，避免BambuStudio解析URL查询参数作为文件名
+            const cleanUrl = modelUrl + '&name=Eclipse_Axe.3mf';
+            let protocolUrl;
+
+            if (isMac) {
+                // macOS使用: bambustudioopen://URL
+                protocolUrl = `bambustudioopen://${encodeURIComponent(cleanUrl)}`;
+                log('🍎 macOS协议格式: bambustudioopen://...', 'info');
+            } else {
+                // Windows/Linux使用: bambustudio://open?file=URL
+                protocolUrl = `bambustudio://open?file=${encodeURIComponent(cleanUrl)}`;
+                log('🖥️ Windows/Linux协议格式: bambustudio://open?file=...', 'info');
+            }
+
+            log(`清洁文件名URL: ${cleanUrl}`, 'info');
+            log(`协议URL: ${protocolUrl}`, 'info');
+            
+            // 触发协议处理器
+            window.location.href = protocolUrl;
+            
+            showStatus('🧪 清洁文件名版本已触发！应该能避免崩溃', 'success');
+            log('✅ 清洁文件名协议处理器已触发', 'success');
+            log('💡 如果还是崩溃，问题不在文件名，而是load_project函数本身', 'warning');
+        }
+        
+        // 测试方法1: 协议处理器
+        async function testMethod1() {
+            const modelUrl = getModelUrl();
+            if (!modelUrl) {
+                alert('请输入3MF文件URL');
+                return;
+            }
+            
+            // 检测操作系统并使用正确的协议格式
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            let protocolUrl;
+            
+            if (isMac) {
+                protocolUrl = `bambustudioopen://${encodeURIComponent(modelUrl)}`;
+                log('🔗 测试macOS协议处理器: bambustudioopen://...', 'info');
+            } else {
+                protocolUrl = `bambustudio://open?file=${encodeURIComponent(modelUrl)}`;
+                log('🔗 测试协议处理器: bambustudio://open?file=...', 'info');
+            }
+            
+            log(`协议URL: ${protocolUrl}`, 'info');
+            
+            // 触发协议处理器
+            window.location.href = protocolUrl;
+            
+            log('✅ 协议处理器已触发', 'success');
+        }
+        
+        // 测试方法2: HTTP API
+        async function testMethod2() {
+            const modelUrl = getModelUrl();
+            if (!modelUrl) {
+                alert('请输入3MF文件URL');
+                return;
+            }
+            
+            log('📡 测试HTTP API调用...', 'info');
+            
+            const command = {
+                sequence_id: Date.now().toString(),
+                command: "homepage_model_download",
+                model: {
+                    url: modelUrl
+                }
+            };
+            
+            log(`发送命令: ${JSON.stringify(command, null, 2)}`, 'info');
+            
+            try {
+                const response = await fetch('http://localhost:13618/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(command),
+                    mode: 'cors'
+                });
+                
+                const result = await response.text();
+                log(`✅ HTTP API响应: ${result}`, 'success');
+                
+            } catch (error) {
+                log(`❌ HTTP API调用失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 测试方法3: 直接下载URL
+        function testMethod3() {
+            const modelUrl = getModelUrl();
+            if (!modelUrl) {
+                alert('请输入3MF文件URL');
+                return;
+            }
+            
+            log('⬇️ 打开直接下载链接...', 'info');
+            log(`下载URL: ${modelUrl}`, 'info');
+            
+            // 在新窗口中打开下载链接
+            window.open(modelUrl, '_blank');
+            
+            log('✅ 下载链接已在新窗口打开', 'success');
+        }
+        
+        // 页面加载完成后自动检查状态
+        window.addEventListener('load', () => {
+            log('🚀 BambuStudio Bridge 测试工具已启动', 'info');
+            log('🔧 重要更新：已修复macOS协议格式问题！', 'success');
+            log('', 'info');
+            log('📋 推荐测试方案:', 'info');
+            log('🥇 【最简单】点击"🚀 直接测试协议处理器" - 现在使用正确的macOS格式！', 'success');
+            log('🧪 【崩溃修复】点击"🧪 测试清洁文件名版本" - 如果上面崩溃，试试这个！', 'warning');
+            log('🥈 【完整版】点击"检查 BambuStudio 状态"然后"发送到 BambuStudio"', 'info');
+            log('', 'info');
+            log('💡 Eclipse Axe模型URL已预填，可直接测试', 'info');
+            log('🍎 macOS将使用: bambustudioopen:// 协议', 'info');
+            log('⚠️ 注意：BambuStudio的HTTP服务器默认不启动，建议用协议处理器', 'warning');
+            
+            // 1秒后自动检查状态
+            setTimeout(() => {
+                checkBambuStudioStatus();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

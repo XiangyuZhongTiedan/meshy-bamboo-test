@@ -1,0 +1,20 @@
+{
+  "name": "meshy-bamboo-test",
+  "version": "1.0.0",
+  "description": "BambuStudio Bridge integration test tool",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . -p 8080",
+    "dev": "python3 -m http.server 8080",
+    "test": "echo \"Open http://localhost:8080 in your browser after starting the server\""
+  },
+  "keywords": [
+    "bambustudio",
+    "3mf",
+    "bridge",
+    "meshy",
+    "test"
+  ],
+  "author": "",
+  "license": "MIT"
+}
